@@ -91,7 +91,7 @@ const OrderConfirmation = () => {
   };
 
   const text = `Добрий день 👋\nПрийняли замовлення на набір бармена "${setType}" ${setColor} кольору ${
-    additional && ` + ${additional}`
+    additional && `+ ${additional}`
   }.
   \nВесь інвентар є в наявності та буде готовий до відправлення ${
     sendDate && getDateString(sendDate, "send")
