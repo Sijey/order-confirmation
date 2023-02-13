@@ -79,8 +79,6 @@ const OrderConfirmation = () => {
   };
 
   const getDateString = (data: DateTime, type: string) => {
-    console.log(DateTime.now().hour);
-    console.log(data.startOf("hour").hour);
     if (data.startOf("day") <= DateTime.now().startOf("day")) {
       return "сьогодні";
     } else if (data.startOf("week") >= DateTime.now().plus({ week: 1 }).startOf("week")) {
