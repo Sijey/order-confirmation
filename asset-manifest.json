@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/order-confirmation/static/css/main.073c9b0a.css",
+    "main.js": "/order-confirmation/static/js/main.dfdac61d.js",
+    "index.html": "/order-confirmation/index.html",
+    "main.073c9b0a.css.map": "/order-confirmation/static/css/main.073c9b0a.css.map",
+    "main.dfdac61d.js.map": "/order-confirmation/static/js/main.dfdac61d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.dfdac61d.js"
+  ]
+}
