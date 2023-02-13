@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { DateTime } from "luxon";
 import { styled } from "@mui/system";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { Additional } from "../constant";
+import { Additional, SetColor, SetType } from "../constant";
 
 const Wrapper = styled(Box)({
   display: "flex",
@@ -36,18 +36,24 @@ const BlockWrap = styled(Box)({
   width: "100%"
 });
 const OrderConfirmation = () => {
-  const [setColor, setSetColor] = useState("");
-  const [setType, setSetType] = useState("");
-  const [sendDate, setSendDate] = useState<DateTime>();
-  const [deliveryDate, setDeliveryDate] = useState<DateTime>();
-  const [additional, setAdditional] = useState("");
+  const [setColor, setSetColor] = useState(SetColor.silver);
+  const [setType, setSetType] = useState(SetType.start);
+  const [sendDate, setSendDate] = useState<DateTime>(
+    DateTime.now().startOf("hour").hour < 18 ? DateTime.now() : DateTime.now().plus({ day: 1 })
+  );
+  const [deliveryDate, setDeliveryDate] = useState<DateTime>(
+    DateTime.now().startOf("hour").hour < 18
+      ? DateTime.now().plus({ day: 1 })
+      : DateTime.now().plus({ day: 2 })
+  );
+  const [additional, setAdditional] = useState(Additional.carts);
   const [open, setOpen] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:1023px)");
-  const handleColorChange = (color: string) => {
+  const handleColorChange = (color: SetColor) => {
     setSetColor(color);
   };
-  const handleTypeChange = (type: string) => {
+  const handleTypeChange = (type: SetType) => {
     setSetType(type);
   };
 
@@ -71,11 +77,10 @@ const OrderConfirmation = () => {
 
     setOpen(false);
   };
-  const d = new Date();
-  d.setDate(d.getDate() + ((1 + 7 - d.getDay()) % 7 || 7));
-  console.log(d);
 
   const getDateString = (data: DateTime, type: string) => {
+    console.log(DateTime.now().hour);
+    console.log(data.startOf("hour").hour);
     if (data.startOf("day") <= DateTime.now().startOf("day")) {
       return "сьогодні";
     } else if (data.startOf("week") >= DateTime.now().plus({ week: 1 }).startOf("week")) {
@@ -102,20 +107,31 @@ const OrderConfirmation = () => {
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Тип:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleTypeChange("Старт")}>Старт</Button>
-            <Button onClick={() => handleTypeChange("Про")}>Про</Button>
-            <Button onClick={() => handleTypeChange("Чемпіон")}>Чемпіон</Button>
+            <Button onClick={() => handleTypeChange(SetType.start)}>{SetType.start}</Button>
+            <Button onClick={() => handleTypeChange(SetType.pro)}>{SetType.pro}</Button>
+            <Button onClick={() => handleTypeChange(SetType.champion)}>{SetType.champion}</Button>
           </Box>
         </ButtonsWrap>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Колір:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleColorChange("сріблястого")}>Сріблястий</Button>
-            <Button onClick={() => handleColorChange("мідного")}>Мідний</Button>
-            <Button onClick={() => handleColorChange("чорного")}>Чорний</Button>
+            <Button onClick={() => handleColorChange(SetColor.silver)}>Сріблястий</Button>
+            <Button onClick={() => handleColorChange(SetColor.copper)}>Мідний</Button>
+            <Button onClick={() => handleColorChange(SetColor.black)}>Чорний</Button>
           </Box>
         </ButtonsWrap>
       </BlockWrap>
+      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+        <Box>Додатки:</Box>
+        <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
+          <Button onClick={() => handleAdditional("")}>Без опцій</Button>
+          <Button onClick={() => handleAdditional(Additional.carts)}>+ Картки</Button>
+          <Button onClick={() => handleAdditional(Additional.stand)}>+ Підставка</Button>
+          <Button onClick={() => handleAdditional(Additional.cartsAndStand)}>
+            + Картки та підставка
+          </Button>
+        </Box>
+      </ButtonsWrap>
       <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Дата відправки:</Box>
@@ -165,16 +181,6 @@ const OrderConfirmation = () => {
           </Box>
         </ButtonsWrap>
       </BlockWrap>
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-        <Box>Додатки:</Box>
-        <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-          <Button onClick={() => handleAdditional(Additional.carts)}>+ Картки</Button>
-          <Button onClick={() => handleAdditional(Additional.stand)}>+ Підставка</Button>
-          <Button onClick={() => handleAdditional(Additional.cartsAndStand)}>
-            + Картки та підставка
-          </Button>
-        </Box>
-      </ButtonsWrap>
       <TextWrap onClick={copyToClipboard} maxWidth="500px">
         Добрий день 👋
         <br />
@@ -186,7 +192,7 @@ const OrderConfirmation = () => {
         Орієнтовна дата доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}, вас
         влаштують такі терміни? 😊
       </TextWrap>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
           Copied!
         </Alert>
