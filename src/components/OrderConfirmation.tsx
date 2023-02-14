@@ -6,8 +6,6 @@ import { Additional, SetColor, SetType } from "../constant";
 import {
   TelegramIcon,
   TelegramShareButton,
-  ViberIcon,
-  ViberShareButton
 } from "react-share";
 
 const Wrapper = styled(Box)({
@@ -199,9 +197,6 @@ const OrderConfirmation = () => {
         <TelegramShareButton title="" url={text}>
           <TelegramIcon />
         </TelegramShareButton>
-        <ViberShareButton title="" url={text}>
-          <ViberIcon />
-        </ViberShareButton>
       </Box>
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
