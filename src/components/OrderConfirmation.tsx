@@ -1,9 +1,14 @@
 import { Alert, Box, Button, Snackbar, useMediaQuery } from "@mui/material";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { DateTime } from "luxon";
 import { styled } from "@mui/system";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { Additional, SetColor, SetType } from "../constant";
+import {
+  TelegramIcon,
+  TelegramShareButton,
+  ViberIcon,
+  ViberShareButton
+} from "react-share";
 
 const Wrapper = styled(Box)({
   display: "flex",
@@ -11,7 +16,7 @@ const Wrapper = styled(Box)({
   flexDirection: "column",
   maxWidth: "900px",
   padding: "0 25px",
-  margin: "50px auto"
+  margin: "25px auto"
 });
 
 const ButtonsWrap = styled(Box)({
@@ -190,6 +195,14 @@ const OrderConfirmation = () => {
         Орієнтовна дата доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}, вас
         влаштують такі терміни? 😊
       </TextWrap>
+      <Box display="flex" mt="15px" gap="30px">
+        <TelegramShareButton title="" url={text}>
+          <TelegramIcon />
+        </TelegramShareButton>
+        <ViberShareButton title="" url={text}>
+          <ViberIcon />
+        </ViberShareButton>
+      </Box>
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
           Copied!
