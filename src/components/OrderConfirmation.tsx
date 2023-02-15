@@ -7,6 +7,7 @@ import {
   TelegramIcon,
   TelegramShareButton,
 } from "react-share";
+import {getDateString} from "../helpers";
 
 const Wrapper = styled(Box)({
   display: "flex",
@@ -81,22 +82,9 @@ const OrderConfirmation = () => {
     setOpen(false);
   };
 
-  const getDateString = (data: DateTime, type: string) => {
-    if (data.startOf("day") <= DateTime.now().startOf("day")) {
-      return "сьогодні";
-    } else if (data.startOf("week") >= DateTime.now().plus({ week: 1 }).startOf("week")) {
-      return `${type === "send" ? "у " : ""}${data.setLocale("ua").toFormat("cccc")}, ${data
-        .setLocale("ua")
-        .toFormat("dd MMMM")}`;
-    } else {
-      return `${data.toRelativeCalendar()}, ${data.setLocale("ua").toFormat("dd" + " MMMM")}`;
-    }
-  };
-
   const text = `Добрий день 👋\nПрийняли замовлення на набір бармена "${setType}" ${setColor} кольору ${
     additional && `+ ${additional}`
-  }.
-  \nВесь інвентар є в наявності та буде готовий до відправлення ${
+  }.\nВесь інвентар є в наявності та буде готовий до відправлення ${
     sendDate && getDateString(sendDate, "send")
   }.\nОрієнтовна дата доставки: ${
     deliveryDate && getDateString(deliveryDate, "deliver")
