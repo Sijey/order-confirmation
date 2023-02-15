@@ -18,7 +18,6 @@ import {
   getMissedItemSingleText,
   getMissedItemWithoutText
 } from "../helpers";
-import { TelegramIcon, TelegramShareButton } from "react-share";
 import { styled } from "@mui/system";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -153,7 +152,6 @@ const CustomMessage = () => {
       prev.includes(item) ? prev.filter((el) => el !== item) : [...prev, item]
     );
   };
-  console.log(missedItems);
 
   const isShownColor = () => {
     return !!(
