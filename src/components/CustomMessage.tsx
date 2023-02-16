@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Additional,
   ChampSet,
@@ -23,6 +23,8 @@ import {
 import { BlockWrap, ButtonsWrap, TextWrap, Wrapper } from "./StyledComponents";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const logo =  require("../images/gandalf.jpeg")
 
 const style = {
   position: "absolute",
@@ -70,6 +72,7 @@ const CustomMessage = () => {
   const isMobile = useMediaQuery("(max-width:1023px)");
   const handleColorChange = (color: SetColor) => {
     setSetColor(color);
+    getDefaultAvailableColors();
   };
   const handleTypeChange = (type: SetType) => {
     setSetType(type);
@@ -165,6 +168,27 @@ const CustomMessage = () => {
     setAvailableItemColors([]);
   };
 
+  const getDefaultAvailableColors = () => {
+    switch (setColor) {
+      case SetColor.silver:
+        setAvailableSetColors([ReplaceVariant.copper, ReplaceVariant.black]);
+        setAvailableItemColors([ReplaceVariant.copper, ReplaceVariant.black]);
+        break;
+      case SetColor.copper:
+        setAvailableSetColors([ReplaceVariant.silver, ReplaceVariant.black]);
+        setAvailableItemColors([ReplaceVariant.silver, ReplaceVariant.black]);
+        break;
+      case SetColor.black:
+        setAvailableSetColors([ReplaceVariant.copper, ReplaceVariant.silver]);
+        setAvailableItemColors([ReplaceVariant.copper, ReplaceVariant.silver]);
+        break;
+    }
+  };
+
+  useEffect(() => {
+    getDefaultAvailableColors();
+  }, [setColor]);
+
   const text = `Добрий день 👋\nПідтверджуємо замовлення на набір бармена "${setType}" ${setColor} кольору${
     additional && `+ ${additional}`
   }.\n\n${
@@ -191,11 +215,14 @@ const CustomMessage = () => {
     )
     .join("")}\n${
     missedItems.length > 0
-      ? `Пропонуємо варіанти:\n${
-          isShownColor() && availableSetColors
-            ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}`
-            : ""
-        }\n${
+      ? `Пропонуємо варіанти:\n${isShownColor() && availableSetColors.length > 1
+        ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}\n`
+        : availableSetColors.length > 0
+          ? `🔸 обрати набір ${getRestColors(availableSetColors).replace(
+            "ий",
+            "ого"
+          )} кольору, все є в наявності\n`
+          : ""}${
           isShownColor() && availableItemColors
             ? `🔸 замінити ${getMissedItemSingleText(missedItems)} на ${getRestColors(
                 availableItemColors
@@ -535,20 +562,23 @@ const CustomMessage = () => {
           </Box>
         </ButtonsWrap>
       </BlockWrap>
-      <TextWrap onClick={copyToClipboard} maxWidth="500px">
+      {missedItems.length !== itemsList.length ?
+        <TextWrap onClick={copyToClipboard} maxWidth="500px">
         Добрий день 👋
-        <br />
-        Підтверджуємо замовлення на набір бармена &quot;{setType}&quot; {setColor} кольору
-        {additional && ` + ${additional}`}.<br />
-        <br />
+        <br/>
+        Підтверджуємо замовлення на набір
+        бармена &quot;{setType}&quot; {setColor} кольору
+        {additional && ` + ${additional}`}.<br/>
+        <br/>
         {missedItems.length > 0 && (
           <Box>
             Щиро вибачаємось, на жаль, у нас вже закінчились всі{" "}
             {getMissedItemManyText(missedItems)}
-            {isShownColor() ? ` ${setColor} кольору,` : ","} а нову поставку очікуємо{" "}
+            {isShownColor() ? ` ${setColor} кольору,` : ","} а нову поставку
+            очікуємо{" "}
             {formattedShipDate} 😔
-            <br />
-            <br />
+            <br/>
+            <br/>
           </Box>
         )}
         Ви замовляли набір &quot;{setType}&quot;, у нього входить:
@@ -564,39 +594,49 @@ const CustomMessage = () => {
             {add.charAt(0).toUpperCase() + add.slice(1)}
           </Box>
         ))}
-        <br />
+        <br/>
         {missedItems.length > 0 && (
           <Box>
             Пропонуємо варіанти:
-            <br />
-            {isShownColor() &&
-              availableSetColors.length > 0 &&
-              `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}`}
-            <br />
+            <br/>
+            {isShownColor() && availableSetColors.length > 1
+              ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}\n`
+              : availableSetColors.length > 0
+                ? `🔸 обрати набір ${getRestColors(availableSetColors).replace(
+                  "ий",
+                  "ого"
+                )} кольору, все є в наявності\n`
+                : ""}
             {isShownColor() && availableItemColors.length > 0 && (
               <Box>
                 🔸 замінити {getMissedItemSingleText(missedItems)} на{" "}
                 {getRestColors(availableItemColors)}
-                <br />
+                <br/>
               </Box>
             )}
             {isShownShipDate && (
               <Box>
-                🔸 зачекати на поставку {formattedShipDate}, якщо у вас є така можливість
-                <br />
+                🔸 зачекати на поставку {formattedShipDate}, якщо у вас є така
+                можливість
+                <br/>
               </Box>
             )}
-            🔸 придбати набір без {getMissedItemWithoutText(missedItems)}, за мінусом{" "}
+            🔸 придбати набір без {getMissedItemWithoutText(missedItems)}, за
+            мінусом{" "}
             {missedItems.length > 1 ? "їх" : "його"} вартості:{" "}
             {countSetPriceWithoutItems(setColor, setType, missedItems, additional)}
-            <br />
-            <br />
+            <br/>
+            <br/>
           </Box>
         )}
-        Інвентар буде готовий до відправлення {sendDate && getDateString(sendDate, "send")}.<br />
-        Орієнтовна дата доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}, вас
+        Інвентар буде готовий до
+        відправлення {sendDate && getDateString(sendDate, "send")}.<br/>
+        Орієнтовна дата
+        доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}, вас
         влаштують такі терміни? 😊
-      </TextWrap>
+      </TextWrap> :
+      <img width="100%" height="100%" style={{objectFit: "contain"}} src={logo} alt="" />
+      }
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
           Copied!

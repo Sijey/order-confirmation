@@ -11,7 +11,7 @@ import {getDateString, isActiveDate} from "../helpers";
 
 const OrderConfirmation = () => {
   const [setColor, setSetColor] = useState(SetColor.silver);
-  const [setType, setSetType] = useState(SetType.start);
+  const [setType, setSetType] = useState<SetType | string>(SetType.start);
   const [sendDate, setSendDate] = useState<DateTime>(
     DateTime.now().startOf("hour").hour < 18 ? DateTime.now() : DateTime.now().plus({ day: 1 })
   );
@@ -27,7 +27,7 @@ const OrderConfirmation = () => {
   const handleColorChange = (color: SetColor) => {
     setSetColor(color);
   };
-  const handleTypeChange = (type: SetType) => {
+  const handleTypeChange = (type: SetType | string) => {
     setSetType(type);
   };
 
@@ -52,9 +52,10 @@ const OrderConfirmation = () => {
     setOpen(false);
   };
 
-  const text = `Добрий день 👋\nПрийняли замовлення на набір бармена "${setType}" ${setColor} кольору ${
+  const text = `Добрий день 👋\nПрийняли замовлення на ${setType === "барний" +
+  " інвентар" ? setType : `набір бармена "${setType}"`} ${setColor} кольору ${
     additional && `+ ${additional}`
-  }.\nВесь інвентар є в наявності та буде готовий до відправлення ${
+  }.\n\nВесь інвентар є в наявності та буде готовий до відправлення ${
     sendDate && getDateString(sendDate, "send")
   }.\nОрієнтовна дата доставки: ${
     deliveryDate && getDateString(deliveryDate, "deliver")
@@ -66,6 +67,11 @@ const OrderConfirmation = () => {
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Тип:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
+            <Button
+              sx={{ backgroundColor: setType === "барний інвентар" ? "rgb(242, 242, 242)" : "white" }}
+              onClick={() => handleTypeChange("барний інвентар")}>
+              барний інвентар
+            </Button>
             <Button
               sx={{ backgroundColor: setType === SetType.start ? "rgb(242, 242, 242)" : "white" }}
               onClick={() => handleTypeChange(SetType.start)}>
@@ -254,7 +260,7 @@ const OrderConfirmation = () => {
       <TextWrap onClick={copyToClipboard} maxWidth="500px">
         Добрий день 👋
         <br />
-        Прийняли замовлення на набір бармена &quot;{setType}&quot; {setColor} кольору
+        Прийняли замовлення на {setType === "барний інвентар" ? setType : `набір бармена "${setType}"`} {setColor} кольору
         {additional && ` + ${additional}`}.<br />
         <br />
         Весь інвентар є в наявності та буде готовий до відправлення{" "}
