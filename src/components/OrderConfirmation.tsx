@@ -9,7 +9,11 @@ import {
 import {Wrapper, BlockWrap, ButtonsWrap, TextWrap} from "./StyledComponents";
 import {getDateString, isActiveDate} from "../helpers";
 
-const OrderConfirmation = () => {
+type OrderConfirmationProps = {
+  copyToClipboard: (text: string) => void;
+};
+
+const OrderConfirmation: React.FC<OrderConfirmationProps> = ({copyToClipboard}) => {
   const [setColor, setSetColor] = useState(SetColor.silver);
   const [setType, setSetType] = useState<SetType | string>(SetType.start);
   const [sendDate, setSendDate] = useState<DateTime>(
@@ -21,7 +25,6 @@ const OrderConfirmation = () => {
       : DateTime.now().plus({ day: 2 })
   );
   const [additional, setAdditional] = useState(Additional.carts);
-  const [open, setOpen] = useState(false);
 
   const isMobile = useMediaQuery("(max-width:1023px)");
   const handleColorChange = (color: SetColor) => {
@@ -37,19 +40,6 @@ const OrderConfirmation = () => {
 
   const handleAdditional = (add) => {
     setAdditional(add);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(text);
-    setOpen(true);
-  };
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
   };
 
   const text = `Добрий день 👋\nПрийняли замовлення на ${setType === "барний" +
@@ -257,7 +247,7 @@ const OrderConfirmation = () => {
           </Box>
         </ButtonsWrap>
       </BlockWrap>
-      <TextWrap onClick={copyToClipboard} maxWidth="500px">
+      <TextWrap onClick={() => copyToClipboard(text)} maxWidth="500px">
         Добрий день 👋
         <br />
         Прийняли замовлення на {setType === "барний інвентар" ? setType : `набір бармена "${setType}"`} {setColor} кольору
@@ -273,11 +263,6 @@ const OrderConfirmation = () => {
           <TelegramIcon />
         </TelegramShareButton>
       </Box>
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          Copied!
-        </Alert>
-      </Snackbar>
     </Wrapper>
   );
 };

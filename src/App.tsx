@@ -1,7 +1,7 @@
 import "./App.css";
 import OrderConfirmation from "./components/OrderConfirmation";
 import React, {useState} from "react";
-import {Tab, Tabs} from "@mui/material";
+import {Alert, Snackbar, Tab, Tabs} from "@mui/material";
 import {TabPanel} from "./components/TabPanel";
 import CustomMessage from "./components/CustomMessage";
 import SwipeableViews from "react-swipeable-views";
@@ -15,9 +15,22 @@ function a11yProps(index: number) {
 
 function App() {
   const [value, setValue] = useState(0);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+
+  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setOpen(true);
   };
 
   return (
@@ -36,12 +49,17 @@ function App() {
       </Tabs>
       <SwipeableViews index={value} onChangeIndex={value => setValue(value)} enableMouseEvents>
         <TabPanel value={value} index={0}>
-          <OrderConfirmation />
+          <OrderConfirmation copyToClipboard={copyToClipboard} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <CustomMessage />
+          <CustomMessage copyToClipboard={copyToClipboard} />
         </TabPanel>
       </SwipeableViews>
+      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+          Copied!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

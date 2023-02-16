@@ -37,7 +37,11 @@ const style = {
   p: 4
 };
 
-const CustomMessage = () => {
+type CustomMessageProps = {
+  copyToClipboard: (text: string) => void;
+};
+
+const CustomMessage: React.FC<CustomMessageProps> = ({copyToClipboard}) => {
   const [setColor, setSetColor] = useState(SetColor.silver);
   const [setType, setSetType] = useState(SetType.start);
   const [sendDate, setSendDate] = useState<DateTime>(
@@ -49,7 +53,6 @@ const CustomMessage = () => {
       : DateTime.now().plus({ day: 2 })
   );
   const [additional, setAdditional] = useState(Additional.carts);
-  const [open, setOpen] = useState(false);
   const [itemsList, setItemsList] = useState<StartSet[] | ProSet[] | ChampSet[]>(
     Object.values(StartSet)
   );
@@ -86,19 +89,6 @@ const CustomMessage = () => {
   const handleAdditional = (add) => {
     setAdditional(add);
     getAddFields(add);
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(text);
-    setOpen(true);
-  };
-
-  const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
   };
 
   const getSetItemsList = (type: SetType) => {
@@ -563,7 +553,7 @@ const CustomMessage = () => {
         </ButtonsWrap>
       </BlockWrap>
       {missedItems.length !== itemsList.length ?
-        <TextWrap onClick={copyToClipboard} maxWidth="500px">
+        <TextWrap onClick={() => copyToClipboard(text)} maxWidth="500px">
         Добрий день 👋
         <br/>
         Підтверджуємо замовлення на набір
@@ -637,11 +627,6 @@ const CustomMessage = () => {
       </TextWrap> :
       <img width="100%" height="100%" style={{objectFit: "contain"}} src={logo} alt="" />
       }
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          Copied!
-        </Alert>
-      </Snackbar>
     </Wrapper>
   );
 };
