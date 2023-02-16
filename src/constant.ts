@@ -66,3 +66,10 @@ export enum MenuList {
 export enum Gift {
   gift = "Подарунок - є в наявності xD",
 }
+
+export enum ReplaceVariant {
+  copper = "мідний",
+  silver = "сріблястий",
+  black = "чорний",
+  noVar = "заміни немає",
+}

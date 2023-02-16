@@ -327,3 +327,7 @@ export const countSetPriceWithoutItems = (setColor: SetColor, setType: SetType, 
   itemsPrice.forEach(item => resultStr = resultStr.concat(` - ${item} грн`));
   return `${resultStr} = ${setPrice} грн`;
 }
+
+export const isActiveDate = (date1: DateTime, date2: DateTime) => {
+  return date1.startOf("day").day === date2.startOf("day").day;
+}
