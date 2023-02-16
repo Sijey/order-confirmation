@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {Tab, Tabs} from "@mui/material";
 import {TabPanel} from "./components/TabPanel";
 import CustomMessage from "./components/CustomMessage";
+import SwipeableViews from "react-swipeable-views";
 
 function a11yProps(index: number) {
   return {
@@ -30,15 +31,17 @@ function App() {
         aria-label="full width tabs example"
         TabIndicatorProps={{style: {background: "rgb(228, 228, 228)"}}}
       >
-        <Tab label="Standard" {...a11yProps(0)} />
-        <Tab label="Custom" {...a11yProps(1)} />
+        <Tab label="Набори" {...a11yProps(0)} />
+        <Tab label="Набори -" {...a11yProps(1)} />
       </Tabs>
-      <TabPanel value={value} index={0}>
-        <OrderConfirmation />
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        <CustomMessage />
-      </TabPanel>
+      <SwipeableViews index={value} onChangeIndex={value => setValue(value)} enableMouseEvents>
+        <TabPanel value={value} index={0}>
+          <OrderConfirmation />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <CustomMessage />
+        </TabPanel>
+      </SwipeableViews>
     </div>
   );
 }
