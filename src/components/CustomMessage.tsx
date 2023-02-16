@@ -5,54 +5,24 @@ import {
   Gift,
   MenuList,
   ProSet,
+  ReplaceVariant,
   SetColor,
   SetType,
   StartSet
 } from "../constant";
 import { DateTime } from "luxon";
-import { Alert, Box, Button, Modal, Snackbar, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Button, Modal, Snackbar, useMediaQuery } from "@mui/material";
 import {
   countSetPriceWithoutItems,
   getDateString,
   getMissedItemManyText,
   getMissedItemSingleText,
-  getMissedItemWithoutText
+  getMissedItemWithoutText,
+  isActiveDate
 } from "../helpers";
-import { styled } from "@mui/system";
+import { BlockWrap, ButtonsWrap, TextWrap, Wrapper } from "./StyledComponents";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-
-const Wrapper = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  flexDirection: "column",
-  maxWidth: "900px",
-  padding: "0 25px",
-  margin: "25px auto"
-});
-
-const ButtonsWrap = styled(Box)({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  width: "100%",
-  borderBottom: "1px solid purple"
-});
-
-const TextWrap = styled(Box)({
-  textAlign: "start",
-  marginTop: "50px",
-  cursor: "pointer",
-  ":hover": {
-    backgroundColor: "lightgray"
-  }
-});
-
-const BlockWrap = styled(Box)({
-  display: "flex",
-  justifyContent: "space-between",
-  width: "100%"
-});
 
 const style = {
   position: "absolute",
@@ -82,10 +52,13 @@ const CustomMessage = () => {
     Object.values(StartSet)
   );
   const [addList, setAddList] = useState([MenuList.list, Additional.carts, Gift.gift]);
-  const [missedItems, setMissedItems] = useState<any>([]);
+  const [missedItems, setMissedItems] = useState<string[]>([]);
   const [openModal, setOpenModal] = React.useState(false);
   const [shippingDate, setShippingDate] = useState(new Date());
+  const [availableSetColors, setAvailableSetColors] = useState<string[]>([]);
+  const [availableItemColors, setAvailableItemColors] = useState<string[]>([]);
   const formattedShipDate = DateTime.fromJSDate(shippingDate).setLocale("ua").toFormat("dd MMMM");
+  const isShownShipDate = DateTime.fromJSDate(shippingDate) <= DateTime.now().plus({ month: 1 });
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
@@ -154,7 +127,7 @@ const CustomMessage = () => {
   };
 
   const isShownColor = () => {
-    return !!(
+    return (
       missedItems.includes(ChampSet.shaker) ||
       missedItems.includes(ChampSet.jigger) ||
       missedItems.includes(ChampSet.fineStrainer) ||
@@ -166,47 +139,73 @@ const CustomMessage = () => {
     );
   };
 
-  const getRestColors = () => {
-    switch (setColor) {
-      case SetColor.silver:
-        return "чорний або мідний";
-      case SetColor.black:
-        return "сріблястий або мідний";
-      case SetColor.copper:
-        return "чорний або сріблястий";
+  const getRestColors = (colors) => {
+    let resultString = "";
+    colors.forEach((item, i) =>
+      i === colors.length - 1 ? (resultString += item) : (resultString += `${item} або `)
+    );
+    return resultString;
+  };
+
+  const handleAvailableSetColors = (item) => {
+    if (item) {
+      return setAvailableSetColors((prev) =>
+        prev.includes(item) ? prev.filter((el) => el !== item) : [...prev, item]
+      );
     }
+    setAvailableSetColors([]);
+  };
+
+  const handleAvailableItemColors = (item) => {
+    if (item) {
+      return setAvailableItemColors((prev) =>
+        prev.includes(item) ? prev.filter((el) => el !== item) : [...prev, item]
+      );
+    }
+    setAvailableItemColors([]);
   };
 
   const text = `Добрий день 👋\nПідтверджуємо замовлення на набір бармена "${setType}" ${setColor} кольору${
     additional && `+ ${additional}`
   }.\n\n${
-    missedItems.length > 0 ?
-    `Щиро вибачаємось, на жаль, у нас вже закінчились всі ${getMissedItemManyText(missedItems)}${
-      isShownColor() ? `${setColor} кольору,` : ","
-    } а нову поставку очікуємо ${formattedShipDate} 😔\n\n` : ""}${
-    `Ви замовляли набір "${setType}", у нього входить:\n${itemsList
-      .map(
-        (item, i) =>
-          `${i + 1})${missedItems.includes(item) ? "❌" : "✅"} ${item} ${
-            missedItems.includes(item) ? `- нема, очікуємо ${formattedShipDate} :(` : ""
-          }\n`
-      )
-      .join("")}`
-  }${addList
-    .map((add, i) => `${itemsList.length + i + 1})${add === Gift.gift ? "🎁" : "✅"} ${add}\n`)
+    missedItems.length > 0
+      ? `Щиро вибачаємось, на жаль, у нас вже закінчились всі ${getMissedItemManyText(
+          missedItems
+        )}${
+          isShownColor() ? `${setColor} кольору,` : ","
+        } а нову поставку очікуємо ${formattedShipDate} 😔\n\n`
+      : ""
+  }${`Ви замовляли набір "${setType}", у нього входить:\n${itemsList
+    .map(
+      (item, i) =>
+        `${i + 1})${missedItems.includes(item) ? "❌" : "✅"} ${item} ${
+          missedItems.includes(item) ? `- нема, очікуємо ${formattedShipDate} :(` : ""
+        }\n`
+    )
+    .join("")}`}${addList
+    .map(
+      (add, i) =>
+        `${itemsList.length + i + 1})${add === Gift.gift ? "🎁" : "✅"} ${
+          add.charAt(0).toUpperCase() + add.slice(1)
+        }\n`
+    )
     .join("")}\n${
     missedItems.length > 0
       ? `Пропонуємо варіанти:\n${
-          isShownColor() ? `1)🔸 обрати набір іншого кольору: ${getRestColors()}` : ""
+          isShownColor() && availableSetColors
+            ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}`
+            : ""
         }\n${
-          isShownColor()
-            ? `2)🔸 замінити ${getMissedItemSingleText(missedItems)} на ${getRestColors()}\n`
+          isShownColor() && availableItemColors
+            ? `🔸 замінити ${getMissedItemSingleText(missedItems)} на ${getRestColors(
+                availableItemColors
+              )}\n`
             : ""
         }${
-          isShownColor() ? 3 : 1
-        })🔸 зачекати на поставку ${formattedShipDate}, якщо у вас є така можливість\n${
-          isShownColor() ? 4 : 2
-        })🔸 придбати набір без ${getMissedItemWithoutText(missedItems)}, за мінусом ${
+          isShownShipDate
+            ? `🔸 зачекати на поставку ${formattedShipDate}, якщо у вас є така можливість\n`
+            : ""
+        }🔸 придбати набір без ${getMissedItemWithoutText(missedItems)}, за мінусом ${
           missedItems.length > 1 ? "їх" : "його"
         } вартості: ${countSetPriceWithoutItems(setColor, setType, missedItems, additional)}\n\n`
       : ""
@@ -223,42 +222,196 @@ const CustomMessage = () => {
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Тип:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleTypeChange(SetType.start)}>{SetType.start}</Button>
-            <Button onClick={() => handleTypeChange(SetType.pro)}>{SetType.pro}</Button>
-            <Button onClick={() => handleTypeChange(SetType.champion)}>{SetType.champion}</Button>
+            <Button
+              sx={{ backgroundColor: setType === SetType.start ? "rgb(242, 242, 242)" : "white" }}
+              onClick={() => handleTypeChange(SetType.start)}>
+              {SetType.start}
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: setType === SetType.pro ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              onClick={() => handleTypeChange(SetType.pro)}>
+              {SetType.pro}
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: setType === SetType.champion ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              onClick={() => handleTypeChange(SetType.champion)}>
+              {SetType.champion}
+            </Button>
           </Box>
         </ButtonsWrap>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Колір:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleColorChange(SetColor.silver)}>Сріблястий</Button>
-            <Button onClick={() => handleColorChange(SetColor.copper)}>Мідний</Button>
-            <Button onClick={() => handleColorChange(SetColor.black)}>Чорний</Button>
+            <Button
+              sx={{
+                backgroundColor: setColor === SetColor.silver ? "rgb(242, 242, 242)" : "white"
+              }}
+              onClick={() => handleColorChange(SetColor.silver)}>
+              Сріблястий
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: setColor === SetColor.copper ? "rgb(242, 242, 242)" : "white"
+              }}
+              onClick={() => handleColorChange(SetColor.copper)}>
+              Мідний
+            </Button>
+            <Button
+              sx={{ backgroundColor: setColor === SetColor.black ? "rgb(242, 242, 242)" : "white" }}
+              onClick={() => handleColorChange(SetColor.black)}>
+              Чорний
+            </Button>
           </Box>
         </ButtonsWrap>
       </BlockWrap>
       <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-        <Box>чого не вистачає:</Box>
+        <Box>Чого не вистачає:</Box>
         <Box
           style={{
             display: "grid",
             gridTemplateColumns: isMobile ? "repeat(3," + " 120px)" : "repeat(4," + " 120px)"
           }}>
           {itemsList.map((item) => (
-            <Button key={item} onClick={() => handleMissedItem(item)}>
+            <Button
+              sx={{
+                backgroundColor: missedItems.includes(item) ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              key={item}
+              onClick={() => handleMissedItem(item)}>
               {item.split(" ")[0]}
             </Button>
           ))}
         </Box>
       </ButtonsWrap>
+      {missedItems.length > 0 && (
+        <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
+          <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+            <Box>Набір на заміну:</Box>
+            <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
+              {setColor !== SetColor.silver && (
+                <Button
+                  sx={{
+                    backgroundColor: availableSetColors.includes(ReplaceVariant.silver)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableSetColors(ReplaceVariant.silver)}>
+                  Сріблястий
+                </Button>
+              )}
+              {setColor !== SetColor.copper && (
+                <Button
+                  sx={{
+                    backgroundColor: availableSetColors.includes(ReplaceVariant.copper)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableSetColors(ReplaceVariant.copper)}>
+                  Мідний
+                </Button>
+              )}
+              {setColor !== SetColor.black && (
+                <Button
+                  sx={{
+                    backgroundColor: availableSetColors.includes(ReplaceVariant.black)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableSetColors(ReplaceVariant.black)}>
+                  Чорний
+                </Button>
+              )}
+              <Button
+                sx={{
+                  backgroundColor: !availableSetColors.length ? "rgb(242," + " 242, 242)" : "white"
+                }}
+                onClick={() => handleAvailableSetColors("")}>
+                Заміни немає
+              </Button>
+            </Box>
+          </ButtonsWrap>
+          <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+            <Box>Колір на заміну:</Box>
+            <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
+              {setColor !== SetColor.silver && (
+                <Button
+                  sx={{
+                    backgroundColor: availableItemColors.includes(ReplaceVariant.silver)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableItemColors(ReplaceVariant.silver)}>
+                  Сріблястий
+                </Button>
+              )}
+              {setColor !== SetColor.copper && (
+                <Button
+                  sx={{
+                    backgroundColor: availableItemColors.includes(ReplaceVariant.copper)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableItemColors(ReplaceVariant.copper)}>
+                  Мідний
+                </Button>
+              )}
+              {setColor !== SetColor.black && (
+                <Button
+                  sx={{
+                    backgroundColor: availableItemColors.includes(ReplaceVariant.black)
+                      ? "rgb(242," + " 242, 242)"
+                      : "white"
+                  }}
+                  onClick={() => handleAvailableItemColors(ReplaceVariant.black)}>
+                  Чорний
+                </Button>
+              )}
+              <Button
+                sx={{
+                  backgroundColor: !availableItemColors.length ? "rgb(242," + " 242, 242)" : "white"
+                }}
+                onClick={() => handleAvailableItemColors("")}>
+                Заміни немає
+              </Button>
+            </Box>
+          </ButtonsWrap>
+        </BlockWrap>
+      )}
       <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Додатки:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleAdditional("")}>Без опцій</Button>
-            <Button onClick={() => handleAdditional(Additional.carts)}>+ Картки</Button>
-            <Button onClick={() => handleAdditional(Additional.stand)}>+ Підставка</Button>
-            <Button onClick={() => handleAdditional(Additional.cartsAndStand)}>
+            <Button
+              sx={{ backgroundColor: !additional ? "rgb(242," + " 242, 242)" : "white" }}
+              onClick={() => handleAdditional("")}>
+              Без опцій
+            </Button>
+            <Button
+              sx={{
+                backgroundColor:
+                  additional === Additional.carts ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              onClick={() => handleAdditional(Additional.carts)}>
+              + Картки
+            </Button>
+            <Button
+              sx={{
+                backgroundColor:
+                  additional === Additional.stand ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              onClick={() => handleAdditional(Additional.stand)}>
+              + Підставка
+            </Button>
+            <Button
+              sx={{
+                backgroundColor:
+                  additional === Additional.cartsAndStand ? "rgb(242," + " 242, 242)" : "white"
+              }}
+              onClick={() => handleAdditional(Additional.cartsAndStand)}>
               + Картки та підставка
             </Button>
           </Box>
@@ -281,14 +434,42 @@ const CustomMessage = () => {
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Дата відправки:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleDateChange("send", DateTime.now())}>Сьогодні</Button>
-            <Button onClick={() => handleDateChange("send", DateTime.now().plus({ day: 1 }))}>
+            <Button
+              sx={{
+                backgroundColor: isActiveDate(sendDate, DateTime.now())
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
+              onClick={() => handleDateChange("send", DateTime.now())}>
+              Сьогодні
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: isActiveDate(sendDate, DateTime.now().plus({ day: 1 }))
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
+              onClick={() => handleDateChange("send", DateTime.now().plus({ day: 1 }))}>
               Завтра
             </Button>
-            <Button onClick={() => handleDateChange("send", DateTime.now().plus({ day: 2 }))}>
+            <Button
+              sx={{
+                backgroundColor: isActiveDate(sendDate, DateTime.now().plus({ day: 2 }))
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
+              onClick={() => handleDateChange("send", DateTime.now().plus({ day: 2 }))}>
               Післязавтра
             </Button>
             <Button
+              sx={{
+                backgroundColor: isActiveDate(
+                  sendDate,
+                  DateTime.now().plus({ week: 1 }).startOf("week")
+                )
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
               onClick={() =>
                 handleDateChange("send", DateTime.now().plus({ week: 1 }).startOf("week"))
               }>
@@ -299,13 +480,33 @@ const CustomMessage = () => {
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Дата отримання:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 1 }))}>
+            <Button
+              sx={{
+                backgroundColor: isActiveDate(deliveryDate, DateTime.now().plus({ day: 1 }))
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
+              onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 1 }))}>
               Завтра
             </Button>
-            <Button onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 2 }))}>
+            <Button
+              sx={{
+                backgroundColor: isActiveDate(deliveryDate, DateTime.now().plus({ day: 2 }))
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
+              onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 2 }))}>
               Післязавтра
             </Button>
             <Button
+              sx={{
+                backgroundColor: isActiveDate(
+                  deliveryDate,
+                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 1 })
+                )
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
               onClick={() =>
                 handleDateChange(
                   "deliver",
@@ -315,6 +516,14 @@ const CustomMessage = () => {
               У вівторок
             </Button>
             <Button
+              sx={{
+                backgroundColor: isActiveDate(
+                  deliveryDate,
+                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 2 })
+                )
+                  ? "rgb(242," + " 242, 242)"
+                  : "white"
+              }}
               onClick={() =>
                 handleDateChange(
                   "deliver",
@@ -333,14 +542,14 @@ const CustomMessage = () => {
         {additional && ` + ${additional}`}.<br />
         <br />
         {missedItems.length > 0 && (
-          <Typography>
+          <Box>
             Щиро вибачаємось, на жаль, у нас вже закінчились всі{" "}
             {getMissedItemManyText(missedItems)}
             {isShownColor() ? ` ${setColor} кольору,` : ","} а нову поставку очікуємо{" "}
             {formattedShipDate} 😔
             <br />
             <br />
-          </Typography>
+          </Box>
         )}
         Ви замовляли набір &quot;{setType}&quot;, у нього входить:
         {itemsList.map((item, i) => (
@@ -351,7 +560,8 @@ const CustomMessage = () => {
         ))}
         {addList.map((add, i) => (
           <Box key={add}>
-            {itemsList.length + i + 1}) {add === Gift.gift ? "🎁" : "✅"} {add}
+            {itemsList.length + i + 1}) {add === Gift.gift ? "🎁" : "✅"}{" "}
+            {add.charAt(0).toUpperCase() + add.slice(1)}
           </Box>
         ))}
         <br />
@@ -359,19 +569,25 @@ const CustomMessage = () => {
           <Box>
             Пропонуємо варіанти:
             <br />
-            {isShownColor() && `1)🔸 обрати набір іншого кольору: ${getRestColors()}`}
+            {isShownColor() &&
+              availableSetColors.length > 0 &&
+              `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}`}
             <br />
-            {isShownColor() && (
-              <Typography>
-                2)🔸 замінити {getMissedItemSingleText(missedItems)} на {getRestColors()}
+            {isShownColor() && availableItemColors.length > 0 && (
+              <Box>
+                🔸 замінити {getMissedItemSingleText(missedItems)} на{" "}
+                {getRestColors(availableItemColors)}
                 <br />
-              </Typography>
+              </Box>
             )}
-            {isShownColor() ? 3 : 1})🔸 зачекати на поставку {formattedShipDate}, якщо у вас є така
-            можливість
-            <br />
-            {isShownColor() ? 4 : 2})🔸 придбати набір без {getMissedItemWithoutText(missedItems)},
-            за мінусом {missedItems.length > 1 ? "їх" : "його"} вартості:{" "}
+            {isShownShipDate && (
+              <Box>
+                🔸 зачекати на поставку {formattedShipDate}, якщо у вас є така можливість
+                <br />
+              </Box>
+            )}
+            🔸 придбати набір без {getMissedItemWithoutText(missedItems)}, за мінусом{" "}
+            {missedItems.length > 1 ? "їх" : "його"} вартості:{" "}
             {countSetPriceWithoutItems(setColor, setType, missedItems, additional)}
             <br />
             <br />

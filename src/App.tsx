@@ -19,10 +19,6 @@ function App() {
     setValue(newValue);
   };
 
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
-
   return (
     <div className="App">
       <Tabs
@@ -32,6 +28,7 @@ function App() {
         textColor="inherit"
         variant="fullWidth"
         aria-label="full width tabs example"
+        TabIndicatorProps={{style: {background: "rgb(228, 228, 228)"}}}
       >
         <Tab label="Standard" {...a11yProps(0)} />
         <Tab label="Custom" {...a11yProps(1)} />
