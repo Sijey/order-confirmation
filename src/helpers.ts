@@ -184,7 +184,7 @@ export const getMissedItemWithoutText = (missedItems) => {
   return text.join(", ");
 };
 
-const getSetDefaultPrice = (setColor: SetColor, setType: SetType) => {
+const getSetDefaultPrice = (setColor: SetColor, setType: SetType | string) => {
   if (setType === SetType.start) {
     if (setColor === SetColor.silver) return 1799;
     return 2099;
@@ -318,7 +318,7 @@ const getAddsPrice = (adds: Additional) => {
   }
 }
 
-export const countSetPriceWithoutItems = (setColor: SetColor, setType: SetType, missedItems: string[], adds: Additional) => {
+export const countSetPriceWithoutItems = (setColor: SetColor, setType: SetType | string, missedItems: string[], adds: Additional) => {
   const defaultSetPrice = getSetDefaultPrice(setColor, setType) + getAddsPrice(adds);
   let setPrice = defaultSetPrice;
   const itemsPrice = countPriceMissedItems(missedItems, setColor);
