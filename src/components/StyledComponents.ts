@@ -1,5 +1,5 @@
 import {styled} from "@mui/system";
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
 
 export const Wrapper = styled(Box)({
   display: "flex",
@@ -22,6 +22,7 @@ export const TextWrap = styled(Box)({
   textAlign: "start",
   marginTop: "50px",
   cursor: "pointer",
+  padding: "10px",
   ":hover": {
     backgroundColor: "lightgray"
   }
@@ -32,3 +33,11 @@ export const BlockWrap = styled(Box)({
   justifyContent: "space-between",
   width: "100%"
 });
+
+export const CustomButton = styled(Button)<{ bgcolor: string }>(
+  ({ bgcolor }) => {
+    return {
+      backgroundColor: bgcolor,
+    };
+  }
+);

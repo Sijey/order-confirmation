@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Snackbar, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import React, { useState } from "react";
 import { DateTime } from "luxon";
 import { Additional, SetColor, SetType } from "../constant";
@@ -6,8 +6,14 @@ import {
   TelegramIcon,
   TelegramShareButton,
 } from "react-share";
-import {Wrapper, BlockWrap, ButtonsWrap, TextWrap} from "./StyledComponents";
-import {getDateString, isActiveDate} from "../helpers";
+import {
+  Wrapper,
+  BlockWrap,
+  ButtonsWrap,
+  TextWrap,
+  CustomButton
+} from "./StyledComponents";
+import {getDateString, isActiveColor, isActiveDate} from "../helpers";
 
 type OrderConfirmationProps = {
   copyToClipboard: (text: string) => void;
@@ -57,168 +63,119 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({copyToClipboard}) 
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Тип:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button
-              sx={{ backgroundColor: setType === "барний інвентар" ? "rgb(242, 242, 242)" : "white" }}
+            <CustomButton
+              bgcolor={isActiveColor("барний інвентар", setType)}
               onClick={() => handleTypeChange("барний інвентар")}>
               барний інвентар
-            </Button>
-            <Button
-              sx={{ backgroundColor: setType === SetType.start ? "rgb(242, 242, 242)" : "white" }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveColor(SetType.start, setType)}
               onClick={() => handleTypeChange(SetType.start)}>
               {SetType.start}
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: setType === SetType.pro ? "rgb(242," + " 242, 242)" : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveColor(SetType.pro, setType)}
               onClick={() => handleTypeChange(SetType.pro)}>
               {SetType.pro}
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: setType === SetType.champion ? "rgb(242," + " 242, 242)" : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveColor(SetType.champion, setType)}
               onClick={() => handleTypeChange(SetType.champion)}>
               {SetType.champion}
-            </Button>
+            </CustomButton>
           </Box>
         </ButtonsWrap>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Колір:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button
-              sx={{
-                backgroundColor: setColor === SetColor.silver ? "rgb(242, 242, 242)" : "white"
-              }}
-              onClick={() => handleColorChange(SetColor.silver)}>
+            <CustomButton
+              onClick={() => handleColorChange(SetColor.silver)}
+              bgcolor={isActiveColor(SetColor.silver, setColor)}>
               Сріблястий
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: setColor === SetColor.copper ? "rgb(242, 242, 242)" : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveColor(SetColor.copper, setColor)}
               onClick={() => handleColorChange(SetColor.copper)}>
               Мідний
-            </Button>
-            <Button
-              sx={{ backgroundColor: setColor === SetColor.black ? "rgb(242, 242, 242)" : "white" }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveColor(SetColor.black, setColor)}
               onClick={() => handleColorChange(SetColor.black)}>
               Чорний
-            </Button>
+            </CustomButton>
           </Box>
         </ButtonsWrap>
       </BlockWrap>
       <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
         <Box>Додатки:</Box>
         <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-          <Button
-            sx={{ backgroundColor: !additional ? "rgb(242," + " 242, 242)" : "white" }}
+          <CustomButton
+            bgcolor={isActiveColor("", additional)}
             onClick={() => handleAdditional("")}>
             Без опцій
-          </Button>
-          <Button
-            sx={{
-              backgroundColor:
-                additional === Additional.carts ? "rgb(242," + " 242, 242)" : "white"
-            }}
+          </CustomButton>
+          <CustomButton
+            bgcolor={isActiveColor(Additional.carts, additional)}
             onClick={() => handleAdditional(Additional.carts)}>
             + Картки
-          </Button>
-          <Button
-            sx={{
-              backgroundColor:
-                additional === Additional.stand ? "rgb(242," + " 242, 242)" : "white"
-            }}
+          </CustomButton>
+          <CustomButton
+            bgcolor={isActiveColor(Additional.stand, additional)}
             onClick={() => handleAdditional(Additional.stand)}>
             + Підставка
-          </Button>
-          <Button
-            sx={{
-              backgroundColor:
-                additional === Additional.cartsAndStand ? "rgb(242," + " 242, 242)" : "white"
-            }}
+          </CustomButton>
+          <CustomButton
+            bgcolor={isActiveColor(Additional.cartsAndStand, additional)}
             onClick={() => handleAdditional(Additional.cartsAndStand)}>
             + Картки та підставка
-          </Button>
+          </CustomButton>
         </Box>
       </ButtonsWrap>
       <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Дата відправки:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(sendDate, DateTime.now())
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            <CustomButton
+              bgcolor={isActiveDate(sendDate, DateTime.now())}
               onClick={() => handleDateChange("send", DateTime.now())}>
               Сьогодні
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(sendDate, DateTime.now().plus({ day: 1 }))
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(sendDate, DateTime.now().plus({ day: 1 }))}
               onClick={() => handleDateChange("send", DateTime.now().plus({ day: 1 }))}>
               Завтра
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(sendDate, DateTime.now().plus({ day: 2 }))
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(sendDate, DateTime.now().plus({ day: 2 }))}
               onClick={() => handleDateChange("send", DateTime.now().plus({ day: 2 }))}>
               Післязавтра
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(
-                  sendDate,
-                  DateTime.now().plus({ week: 1 }).startOf("week")
-                )
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(sendDate,
+                DateTime.now().plus({ week: 1 }).startOf("week"))}
               onClick={() =>
                 handleDateChange("send", DateTime.now().plus({ week: 1 }).startOf("week"))
               }>
               У понеділок
-            </Button>
+            </CustomButton>
           </Box>
         </ButtonsWrap>
         <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
           <Box>Дата отримання:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(deliveryDate, DateTime.now().plus({ day: 1 }))
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            <CustomButton
+              bgcolor={isActiveDate(deliveryDate, DateTime.now().plus({ day: 1 }))}
               onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 1 }))}>
               Завтра
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(deliveryDate, DateTime.now().plus({ day: 2 }))
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(deliveryDate, DateTime.now().plus({ day: 2 }))}
               onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 2 }))}>
               Післязавтра
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(
-                  deliveryDate,
-                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 1 })
-                )
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(deliveryDate,
+                DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 1 }))}
               onClick={() =>
                 handleDateChange(
                   "deliver",
@@ -226,16 +183,10 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({copyToClipboard}) 
                 )
               }>
               У вівторок
-            </Button>
-            <Button
-              sx={{
-                backgroundColor: isActiveDate(
-                  deliveryDate,
-                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 2 })
-                )
-                  ? "rgb(242," + " 242, 242)"
-                  : "white"
-              }}
+            </CustomButton>
+            <CustomButton
+              bgcolor={isActiveDate(deliveryDate,
+                DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 2 }))}
               onClick={() =>
                 handleDateChange(
                   "deliver",
@@ -243,7 +194,7 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({copyToClipboard}) 
                 )
               }>
               У середу
-            </Button>
+            </CustomButton>
           </Box>
         </ButtonsWrap>
       </BlockWrap>

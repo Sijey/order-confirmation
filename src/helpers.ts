@@ -329,5 +329,20 @@ export const countSetPriceWithoutItems = (setColor: SetColor, setType: SetType, 
 }
 
 export const isActiveDate = (date1: DateTime, date2: DateTime) => {
-  return date1.startOf("day").day === date2.startOf("day").day;
+  return date1.startOf("day").day === date2.startOf("day").day ? "rgb(242," +
+    " 242, 242)" : "white";
+}
+
+export const isActiveColor = (setColor, currentColor) => {
+  switch (currentColor) {
+    case setColor:
+      return "rgb(242, 242, 242)";
+    default:
+      return "white"
+  }
+}
+
+export const isActiveColorFromArr = (item, array) => {
+  if (!item && !array.length) return "rgb(242, 242, 242)";
+  return array.includes(item) ? "rgb(242, 242, 242)" : "white";
 }
