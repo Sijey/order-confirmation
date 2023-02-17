@@ -207,9 +207,9 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
     .join("")}\n${
     missedItems.length > 0
       ? `Пропонуємо варіанти:\n${
-          isShownColor() && availableSetColors.length > 1
+          isShownColor() && availableSetColors.length === 2
             ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}\n`
-            : availableSetColors.length > 0
+            : availableSetColors.length === 1
             ? `🔸 обрати набір ${getRestColors(availableSetColors).replace(
                 "ий",
                 "ого"
@@ -297,7 +297,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
           ))}
         </Box>
       </ButtonsWrap>
-      {missedItems.length > 0 && (
+      {isShownColor() && missedItems.length > 0 && (
         <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
           <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
             <Box>Набір на заміну:</Box>
@@ -505,9 +505,9 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
             <Box>
               Пропонуємо варіанти:
               <br />
-              {isShownColor() && availableSetColors.length > 1
+              {isShownColor() && availableSetColors.length === 2
                 ? `🔸 обрати набір іншого кольору: ${getRestColors(availableSetColors)}\n`
-                : availableSetColors.length > 0
+                : availableSetColors.length === 1
                 ? `🔸 обрати набір ${getRestColors(availableSetColors).replace(
                     "ий",
                     "ого"
