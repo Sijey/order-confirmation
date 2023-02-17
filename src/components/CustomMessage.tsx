@@ -18,12 +18,14 @@ import {
   getMissedItemManyText,
   getMissedItemSingleText,
   getMissedItemWithoutText,
-  isActiveColor, isActiveColorFromArr,
-  isActiveDate,
+  isActiveColorFromArr
 } from "../helpers";
 import { BlockWrap, ButtonsWrap, CustomButton, TextWrap, Wrapper } from "./StyledComponents";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import TypeAndColors from "./buttonBlocks/TypeAndColors";
+import Adds from "./buttonBlocks/Adds";
+import SendReceiveDate from "./buttonBlocks/SendReceiveDate";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const logo = require("../images/gandalf.jpeg");
 
@@ -44,7 +46,7 @@ type CustomMessageProps = {
 
 const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
   const [setColor, setSetColor] = useState(SetColor.silver);
-  const [setType, setSetType] = useState(SetType.start);
+  const [setType, setSetType] = useState<SetType | string>(SetType.start);
   const [sendDate, setSendDate] = useState<DateTime>(
     DateTime.now().startOf("hour").hour < 18 ? DateTime.now() : DateTime.now().plus({ day: 1 })
   );
@@ -78,7 +80,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
     setSetColor(color);
     getDefaultAvailableColors();
   };
-  const handleTypeChange = (type: SetType) => {
+  const handleTypeChange = (type: SetType | string) => {
     setSetType(type);
     getSetItemsList(type);
   };
@@ -92,7 +94,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
     getAddFields(add);
   };
 
-  const getSetItemsList = (type: SetType) => {
+  const getSetItemsList = (type: SetType | string) => {
     if (type === SetType.start) {
       setItemsList(Object.values(StartSet));
     } else if (type === SetType.pro) {
@@ -187,7 +189,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
       ? `Щиро вибачаємось, на жаль, у нас вже закінчились всі ${getMissedItemManyText(
           missedItems
         )}${
-          isShownColor() ? `${setColor} кольору,` : ","
+          isShownColor() ? ` ${setColor} кольору,` : ","
         } а нову поставку очікуємо ${formattedShipDate} 😔\n\n`
       : ""
   }${`Ви замовляли набір "${setType}", у нього входить:\n${itemsList
@@ -238,48 +240,13 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
 
   return (
     <Wrapper>
-      <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-        <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-          <Box>Тип:</Box>
-          <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <CustomButton
-              bgcolor={isActiveColor(SetType.start, setType)}
-              onClick={() => handleTypeChange(SetType.start)}>
-              {SetType.start}
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(SetType.pro, setType)}
-              onClick={() => handleTypeChange(SetType.pro)}>
-              {SetType.pro}
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(SetType.champion, setType)}
-              onClick={() => handleTypeChange(SetType.champion)}>
-              {SetType.champion}
-            </CustomButton>
-          </Box>
-        </ButtonsWrap>
-        <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-          <Box>Колір:</Box>
-          <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <CustomButton
-              onClick={() => handleColorChange(SetColor.silver)}
-              bgcolor={isActiveColor(SetColor.silver, setColor)}>
-              Сріблястий
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(SetColor.copper, setColor)}
-              onClick={() => handleColorChange(SetColor.copper)}>
-              Мідний
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(SetColor.black, setColor)}
-              onClick={() => handleColorChange(SetColor.black)}>
-              Чорний
-            </CustomButton>
-          </Box>
-        </ButtonsWrap>
-      </BlockWrap>
+      <TypeAndColors
+        isCustom={true}
+        setType={setType}
+        setColor={setColor}
+        handleTypeChange={handleTypeChange}
+        handleColorChange={handleColorChange}
+      />
       <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
         <Box>Чого не вистачає:</Box>
         <Box
@@ -364,31 +331,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
         </BlockWrap>
       )}
       <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-        <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-          <Box>Додатки:</Box>
-          <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <CustomButton
-              bgcolor={isActiveColor("", additional)}
-              onClick={() => handleAdditional("")}>
-              Без опцій
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(Additional.carts, additional)}
-              onClick={() => handleAdditional(Additional.carts)}>
-              + Картки
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(Additional.stand, additional)}
-              onClick={() => handleAdditional(Additional.stand)}>
-              + Підставка
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveColor(Additional.cartsAndStand, additional)}
-              onClick={() => handleAdditional(Additional.cartsAndStand)}>
-              + Картки та підставка
-            </CustomButton>
-          </Box>
-        </ButtonsWrap>
+        <Adds additional={additional} handleAdditional={handleAdditional} />
         <ButtonsWrap
           style={{
             flexDirection: isMobile ? "column" : "row",
@@ -403,73 +346,11 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
           </Modal>
         </ButtonsWrap>
       </BlockWrap>
-      <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-        <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-          <Box>Дата відправки:</Box>
-          <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <CustomButton
-              bgcolor={isActiveDate(sendDate, DateTime.now())}
-              onClick={() => handleDateChange("send", DateTime.now())}>
-              Сьогодні
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(sendDate, DateTime.now().plus({ day: 1 }))}
-              onClick={() => handleDateChange("send", DateTime.now().plus({ day: 1 }))}>
-              Завтра
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(sendDate, DateTime.now().plus({ day: 2 }))}
-              onClick={() => handleDateChange("send", DateTime.now().plus({ day: 2 }))}>
-              Післязавтра
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(sendDate,
-                DateTime.now().plus({ week: 1 }).startOf("week"))}
-              onClick={() =>
-                handleDateChange("send", DateTime.now().plus({ week: 1 }).startOf("week"))
-              }>
-              У понеділок
-            </CustomButton>
-          </Box>
-        </ButtonsWrap>
-        <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
-          <Box>Дата отримання:</Box>
-          <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
-            <CustomButton
-              bgcolor={isActiveDate(deliveryDate, DateTime.now().plus({ day: 1 }))}
-              onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 1 }))}>
-              Завтра
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(deliveryDate, DateTime.now().plus({ day: 2 }))}
-              onClick={() => handleDateChange("deliver", DateTime.now().plus({ day: 2 }))}>
-              Післязавтра
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(deliveryDate,
-                DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 1 }))}
-              onClick={() =>
-                handleDateChange(
-                  "deliver",
-                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 1 })
-                )
-              }>
-              У вівторок
-            </CustomButton>
-            <CustomButton
-              bgcolor={isActiveDate(deliveryDate,
-                DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 2 }))}
-              onClick={() =>
-                handleDateChange(
-                  "deliver",
-                  DateTime.now().plus({ week: 1 }).startOf("week").plus({ day: 2 })
-                )
-              }>
-              У середу
-            </CustomButton>
-          </Box>
-        </ButtonsWrap>
-      </BlockWrap>
+      <SendReceiveDate
+        sendDate={sendDate}
+        deliveryDate={deliveryDate}
+        handleDateChange={handleDateChange}
+      />
       {missedItems.length !== itemsList.length ? (
         <TextWrap onClick={() => copyToClipboard(text)} maxWidth="500px">
           Добрий день 👋
