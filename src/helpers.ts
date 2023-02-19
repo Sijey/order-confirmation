@@ -315,6 +315,8 @@ const getAddsPrice = (adds: Additional) => {
       return 499;
     case Additional.cartsAndStand:
       return 638;
+    default:
+      return 0;
   }
 }
 
