@@ -183,7 +183,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
   }, [setColor]);
 
   const text = `Добрий день 👋\nПідтверджуємо замовлення на набір бармена "${setType}" ${setColor} кольору${
-    additional && `+ ${additional}`
+    additional && ` + ${additional}`
   }.\n\n${
     missedItems.length > 0
       ? `Щиро вибачаємось, на жаль, у нас вже закінчились всі ${getMissedItemManyText(

@@ -42,8 +42,8 @@ const OrderConfirmation: React.FC<OrderConfirmationProps> = ({ copyToClipboard }
 
   const text = `Добрий день 👋\nПрийняли замовлення на ${
     setType === "барний" + " інвентар" ? setType : `набір бармена "${setType}"`
-  } ${setColor} кольору ${
-    additional && `+ ${additional}`
+  } ${setColor} кольору${
+    additional && ` + ${additional}`
   }.\n\nВесь інвентар є в наявності та буде готовий до відправлення ${
     sendDate && getDateString(sendDate, "send")
   }.\nОрієнтовна дата доставки: ${
