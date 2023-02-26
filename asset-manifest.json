@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/order-confirmation/static/css/main.682e7311.css",
-    "main.js": "/order-confirmation/static/js/main.d91b4523.js",
+    "main.js": "/order-confirmation/static/js/main.fa2d12a0.js",
     "static/media/gandalf.jpeg": "/order-confirmation/static/media/gandalf.cdc7d8fa41f2a06941f3.jpeg",
     "index.html": "/order-confirmation/index.html",
     "main.682e7311.css.map": "/order-confirmation/static/css/main.682e7311.css.map",
-    "main.d91b4523.js.map": "/order-confirmation/static/js/main.d91b4523.js.map"
+    "main.fa2d12a0.js.map": "/order-confirmation/static/js/main.fa2d12a0.js.map"
   },
   "entrypoints": [
     "static/css/main.682e7311.css",
-    "static/js/main.d91b4523.js"
+    "static/js/main.fa2d12a0.js"
   ]
 }
