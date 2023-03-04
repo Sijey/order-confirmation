@@ -7,9 +7,9 @@ export const getDateString = (data: DateTime, type: string) => {
   } else if (data.startOf("week") >= DateTime.now().plus({ week: 1 }).startOf("week")) {
     return `${type === "send" ? "у " : ""}${data.setLocale("ua").toFormat("cccc")}, ${data
       .setLocale("ua")
-      .toFormat("dd MMMM")}`;
+      .toFormat("d MMMM")}`;
   } else {
-    return `${data.toRelativeCalendar()}, ${data.setLocale("ua").toFormat("dd" + " MMMM")}`;
+    return `${data.toRelativeCalendar()}, ${data.setLocale("ua").toFormat("d" + " MMMM")}`;
   }
 };
 
