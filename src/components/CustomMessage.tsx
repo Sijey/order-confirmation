@@ -65,13 +65,15 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
   const [shippingDate, setShippingDate] = useState(new Date());
   const [availableSetColors, setAvailableSetColors] = useState<string[]>([]);
   const [availableItemColors, setAvailableItemColors] = useState<string[]>([]);
-  const formattedShipDate = DateTime.fromJSDate(shippingDate).setLocale("ua").toFormat("dd MMMM");
+  const [isShippingDateSelected, setIsShippingDateSelected] = useState<boolean>(false);
+  const formattedShipDate = DateTime.fromJSDate(shippingDate).setLocale("ua").toFormat("d MMMM");
   const isShownShipDate = DateTime.fromJSDate(shippingDate) <= DateTime.now().plus({ month: 1 });
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
   const handleShippingDate = (date) => {
     setShippingDate(date);
+    setIsShippingDateSelected(true);
     handleCloseModal();
   };
 
@@ -338,7 +340,11 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
             justifyContent: isMobile ? "start" : "space-between"
           }}>
           <Box>Дата поставки:</Box>
-          <Button onClick={handleOpenModal}>Обрати дату</Button>
+          <Button
+            sx={{ bgcolor: isShippingDateSelected ? "rgb(242, 242, 242)" : "rgb(255, 222, 222)" }}
+            onClick={handleOpenModal}>
+            Обрати дату
+          </Button>
           <Modal open={openModal} onClose={handleCloseModal}>
             <Box sx={style}>
               <Calendar onChange={handleShippingDate} value={shippingDate} />
