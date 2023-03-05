@@ -5,6 +5,7 @@ import {Alert, Snackbar, Tab, Tabs} from "@mui/material";
 import {TabPanel} from "./components/TabPanel";
 import CustomMessage from "./components/CustomMessage";
 import SwipeableViews from "react-swipeable-views";
+import MarketPlaceConfirmation from "./components/MarketPlaceConfirmation";
 
 function a11yProps(index: number) {
   return {
@@ -46,6 +47,7 @@ function App() {
       >
         <Tab label="Набори" {...a11yProps(0)} />
         <Tab label="Набори -" {...a11yProps(1)} />
+        <Tab label="Маркетплейс" {...a11yProps(2)} />
       </Tabs>
       <SwipeableViews index={value} onChangeIndex={value => setValue(value)} enableMouseEvents>
         <TabPanel value={value} index={0}>
@@ -53,6 +55,9 @@ function App() {
         </TabPanel>
         <TabPanel value={value} index={1}>
           <CustomMessage copyToClipboard={copyToClipboard} />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <MarketPlaceConfirmation copyToClipboard={copyToClipboard} />
         </TabPanel>
       </SwipeableViews>
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>

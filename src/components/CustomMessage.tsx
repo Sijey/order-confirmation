@@ -249,7 +249,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
         handleTypeChange={handleTypeChange}
         handleColorChange={handleColorChange}
       />
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+      <ButtonsWrap ismobile={isMobile ? 1 : 0}>
         <Box>Чого не вистачає:</Box>
         <Box
           style={{
@@ -268,7 +268,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
       </ButtonsWrap>
       {isShownColor() && missedItems.length > 0 && (
         <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-          <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+          <ButtonsWrap ismobile={isMobile ? 1 : 0}>
             <Box>Набір на заміну:</Box>
             <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
               {setColor !== SetColor.silver && (
@@ -299,7 +299,7 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
               </CustomButton>
             </Box>
           </ButtonsWrap>
-          <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+          <ButtonsWrap ismobile={isMobile ? 1 : 0}>
             <Box>Колір на заміну:</Box>
             <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
               {setColor !== SetColor.silver && (
@@ -335,8 +335,8 @@ const CustomMessage: React.FC<CustomMessageProps> = ({ copyToClipboard }) => {
       <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
         <Adds additional={additional} handleAdditional={handleAdditional} />
         <ButtonsWrap
+          ismobile={isMobile ? 1 : 0}
           style={{
-            flexDirection: isMobile ? "column" : "row",
             justifyContent: isMobile ? "start" : "space-between"
           }}>
           <Box>Дата поставки:</Box>

@@ -13,7 +13,7 @@ const Adds: React.FC<AddsProps> = ({ additional, handleAdditional }) => {
   const isMobile = useMediaQuery("(max-width:1023px)");
 
   return (
-    <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+    <ButtonsWrap ismobile={isMobile ? 1 : 0}>
       <Box>Додатки:</Box>
       <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
         <CustomButton bgcolor={isActiveColor("", additional)} onClick={() => handleAdditional("")}>

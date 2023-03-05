@@ -10,12 +10,16 @@ export const Wrapper = styled(Box)({
   margin: "25px auto"
 });
 
-export const ButtonsWrap = styled(Box)({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  width: "100%",
-  borderBottom: "1px solid rgb(228, 228, 228)"
+export const ButtonsWrap = styled(Box)<{ ismobile }>(
+  ({ ismobile }) => {
+    return {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      borderBottom: "1px solid rgb(228, 228, 228)",
+      flexDirection: ismobile ? "column" : "row"
+    }
 });
 
 export const TextWrap = styled(Box)({
