@@ -67,7 +67,7 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
     !isConnected ? "Не можемо зв'язатися з вами" + " по телефону.\n" : ""
   }\n${
     paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "
-  }замовлення з ${platform} ${orderNumber} на:\n${orderItems.map(
+  }замовлення з ${platform} №${orderNumber} на:\n${orderItems.map(
     (item) => `• ${item}\n`
   )}\nАдреса доставки:\n${shippingAddress}\n\nЗамовлення буде готове до відправлення ${
     sendDate && getDateString(sendDate, "send")
@@ -183,7 +183,7 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
         )}
         <br />
         {paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "}
-        замовлення з {platform} {orderNumber} на:
+        замовлення з {platform} №{orderNumber} на:
         <br />
         {orderItems.map((item, i) => (
           <Box key={i}>
