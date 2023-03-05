@@ -19,7 +19,7 @@ const SendReceiveDate: React.FC<SendReceiveDateProps> = ({
 
   return (
     <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+      <ButtonsWrap ismobile={isMobile ? 1 : 0}>
         <Box>Дата відправки:</Box>
         <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
           <CustomButton
@@ -46,7 +46,7 @@ const SendReceiveDate: React.FC<SendReceiveDateProps> = ({
           </CustomButton>
         </Box>
       </ButtonsWrap>
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+      <ButtonsWrap ismobile={isMobile ? 1 : 0}>
         <Box>Дата отримання:</Box>
         <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
           <CustomButton

@@ -73,3 +73,15 @@ export enum ReplaceVariant {
   black = "чорний",
   noVar = "заміни немає",
 }
+
+export enum MarketPlace {
+  prom = "Prom",
+  epicentr = "сайту Епіцентр",
+  rozetka = "Rozetka"
+}
+
+export enum Payment {
+  payed = "Оплатити",
+  postPayment = "При отриманн",
+  req = "Реквізити"
+}

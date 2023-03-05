@@ -23,7 +23,7 @@ const TypeAndColors: React.FC<TypeAndColorsProps> = ({
 
   return (
     <BlockWrap style={{ flexDirection: isMobile ? "row" : "column" }}>
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+      <ButtonsWrap ismobile={isMobile ? 1 : 0}>
         <Box>Тип:</Box>
         <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
           {!isCustom && (
@@ -50,7 +50,7 @@ const TypeAndColors: React.FC<TypeAndColorsProps> = ({
           </CustomButton>
         </Box>
       </ButtonsWrap>
-      <ButtonsWrap style={{ flexDirection: isMobile ? "column" : "row" }}>
+      <ButtonsWrap ismobile={isMobile ? 1 : 0}>
         <Box>Колір:</Box>
         <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
           <CustomButton
