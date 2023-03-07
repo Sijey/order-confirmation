@@ -55,11 +55,11 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
   const getPaymentString = () => {
     switch (paymentType) {
       case Payment.postPayment:
-        return "Оплата під час отримання товару";
+        return "💵 Оплата під час отримання товару";
       case Payment.payed:
-        return "Оплата пройшла успішно";
+        return "💵 Оплата пройшла успішно";
       case Payment.req:
-        return "При оформленні ви вказали оплату по реквізитам - зручніше" + " Приват чи Моно?";
+        return "💵 При оформленні ви вказали оплату по реквізитам - зручніше" + " Приват чи Моно?";
     }
   };
 
@@ -67,14 +67,14 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
     !isConnected ? "Не можемо зв'язатися з вами" + " по телефону.\n" : ""
   }\n${
     paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "
-  }замовлення з ${platform} №${orderNumber} на:\n${orderItems.map(
-    (item) => `• ${item}\n`
-  )}\nАдреса доставки:\n${shippingAddress}\n\nЗамовлення буде готове до відправлення ${
+  }замовлення з ${platform} №${orderNumber} на:\n${orderItems
+    .map((item) => `🔸${item}\n`)
+    .join("")}\n✅ Замовлення буде готове до відправлення ${
     sendDate && getDateString(sendDate, "send")
   }.\nОрієнтовна дата доставки: ${
     deliveryDate && getDateString(deliveryDate, "deliver")
-  }.\n\n${getPaymentString()}\n\n${
-    paymentType === Payment.postPayment ? "Підтверджуєте замовлення?" : "Дякуємо за замовлення 😊"
+  }.\n\n🚚 Адреса доставки:\n${shippingAddress}\n\n${getPaymentString()}\n\n${
+    paymentType === Payment.postPayment ? "Підтверджуєте замовлення?" : "Дякуємо за замовлення 🙌"
   }`;
 
   return (
@@ -187,25 +187,25 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
         <br />
         {orderItems.map((item, i) => (
           <Box key={i}>
-            • {item}
+            🔸{item}
             <br />
           </Box>
         ))}
+        <br />✅ Замовлення буде готове до відправлення{" "}
+        {sendDate && getDateString(sendDate, "send")}.<br />
+        Орієнтовна дата доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}.<br />
         <br />
-        Адреса доставки:
+        🚚 Адреса доставки:
         <br />
         {shippingAddress}
         <br />
-        <br />
-        Замовлення буде готове до відправлення {sendDate && getDateString(sendDate, "send")}.<br />
-        Орієнтовна дата доставки: {deliveryDate && getDateString(deliveryDate, "deliver")}.<br />
         <br />
         {getPaymentString()}
         <br />
         <br />
         {paymentType === Payment.postPayment
           ? "Підтверджуєте замовлення?"
-          : "Дякуємо за замовлення 😊"}
+          : "Дякуємо за замовлення 🙌"}
       </TextWrap>
     </Wrapper>
   );
