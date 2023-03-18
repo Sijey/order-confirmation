@@ -31,6 +31,7 @@ function App() {
     setOpen(false);
   };
   const copyToClipboard = (text: string) => {
+    getCopyLimit();
     localStorage.setItem("limit", (copyLimit - 1) + "");
     setCopyLimit(copyLimit => copyLimit - 1);
     copyLimit > 0 && navigator.clipboard.writeText(text);
