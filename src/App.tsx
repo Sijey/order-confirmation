@@ -80,11 +80,11 @@ function App() {
       </SwipeableViews>
       <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
         {copyLimit > 0 ? <Alert onClose={handleClose} severity="warning" sx={{width: "100%"}}>
-          У Вас залишилось {copyLimit} бескоштовних копіювань
+          У Вас залишилось {copyLimit} безкоштовних копіювань
         </Alert>
         :
           <Alert onClose={handleClose} severity="error" sx={{width: "100%"}}>
-            Упс, у Вас закінчились всі бескоштовні копіювання, будь ласка, зверніться до команди розробки
+            Упс, у Вас закінчились всі безкоштовні копіювання, будь ласка, зверніться до команди розробки
           </Alert>
         }
       </Snackbar>
