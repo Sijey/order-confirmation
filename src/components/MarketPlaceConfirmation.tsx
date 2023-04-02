@@ -12,8 +12,8 @@ type MarketProps = {
 
 const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => {
   const isMobile = useMediaQuery("(max-width:1023px)");
-  const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [platform, setPlatform] = useState<MarketPlace>(MarketPlace.rozetka);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
+  const [platform, setPlatform] = useState<MarketPlace | undefined>();
   const [orderNumber, setOrderNumber] = useState<string>("");
   const [shippingAddress, setShippingAddress] = useState<string>("");
   const [orderItems, setOrderItems] = useState<string[]>([]);
@@ -65,9 +65,9 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
 
   const text = `Добрий день 👋\n${
     !isConnected ? "Не можемо зв'язатися з вами" + " по телефону.\n" : ""
-  }\n${
-    paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "
-  }замовлення з ${platform} №${orderNumber} на:\n${orderItems
+  }\n${paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "}замовлення ${
+    platform ? `з ${platform} ` : ""
+  }№${orderNumber} на:\n${orderItems
     .map((item) => `🔸${item}\n`)
     .join("")}\n✅ Замовлення буде готове до відправлення ${
     sendDate && getDateString(sendDate, "send")
@@ -98,6 +98,11 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
         <ButtonsWrap ismobile={isMobile ? 1 : 0}>
           <Box>Платформа:</Box>
           <Box style={{ flexDirection: isMobile ? "column" : "row", display: "flex" }}>
+            <CustomButton
+              bgcolor={isActiveColor(undefined, platform)}
+              onClick={() => setPlatform(undefined)}>
+              Без платформи
+            </CustomButton>
             <CustomButton
               bgcolor={isActiveColor(MarketPlace.epicentr, platform)}
               onClick={() => setPlatform(MarketPlace.epicentr)}>
@@ -161,7 +166,7 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
           <CustomButton
             bgcolor={isActiveColor(Payment.payed, paymentType)}
             onClick={() => setPaymentType(Payment.payed)}>
-            Оплатити
+            Оплатили
           </CustomButton>
           <CustomButton
             bgcolor={isActiveColor(Payment.req, paymentType)}
@@ -183,7 +188,7 @@ const MarketPlaceConfirmation: React.FC<MarketProps> = ({ copyToClipboard }) => 
         )}
         <br />
         {paymentType === Payment.postPayment ? "Прийняли " : "Підтверджуємо "}
-        замовлення з {platform} №{orderNumber} на:
+        замовлення {platform && `з ${platform}`} №{orderNumber} на:
         <br />
         {orderItems.map((item, i) => (
           <Box key={i}>
