@@ -78,13 +78,13 @@ function App() {
           <MarketPlaceConfirmation copyToClipboard={copyToClipboard} />
         </TabPanel>
       </SwipeableViews>
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
         {copyLimit > 0 ? <Alert onClose={handleClose} severity="warning" sx={{width: "100%"}}>
-          У Вас залишилось {copyLimit} безкоштовних копіювань
+          У Вас залишилось {copyLimit} безплатних копіювань
         </Alert>
         :
           <Alert onClose={handleClose} severity="error" sx={{width: "100%"}}>
-            Упс, у Вас закінчились всі безкоштовні копіювання, будь ласка, зверніться до команди розробки
+            Упс, у Вас закінчились всі безплатні копіювання, будь ласка, зверніться до команди розробки
           </Alert>
         }
       </Snackbar>
