@@ -1,6 +1,6 @@
 import "./App.css";
 import OrderConfirmation from "./components/OrderConfirmation";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Alert, Snackbar, Tab, Tabs} from "@mui/material";
 import {TabPanel} from "./components/TabPanel";
 import CustomMessage from "./components/CustomMessage";
@@ -17,6 +17,7 @@ function a11yProps(index: number) {
 function App() {
   const [value, setValue] = useState(0);
   const [open, setOpen] = useState(false);
+  const [copyLimit, setCopyLimit] = useState<number>(10);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -30,12 +31,29 @@ function App() {
     setOpen(false);
   };
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+    getCopyLimit();
+    localStorage.setItem("limit", (copyLimit - 1) + "");
+    setCopyLimit(copyLimit => copyLimit - 1);
+    copyLimit > 0 && navigator.clipboard.writeText(text);
     setOpen(true);
   };
 
+  const getCopyLimit = () => {
+    const limit = localStorage.getItem("limit");
+    if (!limit) {
+      localStorage.setItem("limit", "10");
+      setCopyLimit(+"10");
+    } else {
+      setCopyLimit(+limit)
+    }
+  }
+
+  useEffect(() => {
+    getCopyLimit();
+  }, []);
+
   return (
-    <div className="App">
+    <div className="App" onContextMenu={(event) => event.preventDefault()} style={{userSelect: "none"}}>
       <Tabs
         value={value}
         onChange={handleChange}
@@ -60,10 +78,15 @@ function App() {
           <MarketPlaceConfirmation copyToClipboard={copyToClipboard} />
         </TabPanel>
       </SwipeableViews>
-      <Snackbar open={open} autoHideDuration={1000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
-          Copied!
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+        {copyLimit > 0 ? <Alert onClose={handleClose} severity="warning" sx={{width: "100%"}}>
+          У Вас залишилось {copyLimit} безплатних копіювань
         </Alert>
+        :
+          <Alert onClose={handleClose} severity="error" sx={{width: "100%"}}>
+            Упс, у Вас закінчились всі безплатні копіювання, будь ласка, зверніться до команди розробки
+          </Alert>
+        }
       </Snackbar>
     </div>
   );
